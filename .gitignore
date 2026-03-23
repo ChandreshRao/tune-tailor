@@ -1,0 +1,15 @@
+node_modules
+.env
+.env.*
+!.env.example
+
+# Database
+db/*.db
+db/*.db-journal
+!db/.gitkeep
+
+# Media
+songs/*
+!songs/.gitkeep
+uploads/*
+!uploads/.gitkeep

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuneTailor Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TuneTailor</h1>
+            <p>Music Assistant Management</p>
+        </header>
+
+        <main>
+            <!-- Songs Section -->
+            <section id="songs-section" class="glass-card">
+                <div class="section-header">
+                    <h2>🎵 Manage Songs</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="file" id="multiple-upload" accept=".mp3,.m4a" multiple hidden>
+                        <button id="sync-songs-btn" class="btn-secondary">🔄 Sync Songs</button>
+                        <button id="add-songs-btn" class="btn-success">+ Add Songs</button>
+                    </div>
+                </div>
+                <div id="upload-status" class="status-message" style="margin-bottom: 1rem;"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Album</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="songs-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="songs-pagination-controls" class="pagination"></div>
+            </section>
+
+            <!-- Intent Section -->
+            <section id="intent-section" class="glass-card">
+                <div class="section-header">
+                    <h2>🧠 Intent Mappings</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <button id="refresh-intents-btn" class="btn-secondary">🔄 Refresh</button>
+                        <button id="add-intent-btn" class="btn-primary">+ Add Intent</button>
+                    </div>
+                </div>
+                
+                <div class="table-controls">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search query, intent, or song...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Query</th>
+                                <th>Intent</th>
+                                <th>Mapped Song</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="intent-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination-controls" class="pagination"></div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="glass-card">
+                <div class="section-header">
+                    <h2>⚙️ Application Settings</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Setting Key</th>
+                                <th>Value</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settings-body">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Setting Modal -->
+    <div id="setting-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h3 id="setting-modal-title">Edit Setting</h3>
+            <form id="setting-form">
+                <div class="form-group">
+                    <label id="setting-key-label">Setting Key</label>
+                    <input type="text" id="edit-setting-key" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Value</label>
+                    <input type="text" id="edit-setting-value" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="close-setting-modal">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Setting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+            <div id="song-modal" class="modal">
+                <div class="modal-content glass-card">
+                    <h3>Edit Song Metadata</h3>
+                    <form id="song-form">
+                        <input type="hidden" id="edit-song-id">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="edit-song-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Artist</label>
+                            <input type="text" id="edit-song-artist">
+                        </div>
+                        <div class="form-group">
+                            <label>Album</label>
+                            <input type="text" id="edit-song-album">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" id="close-song-modal">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Global Player -->
+            <div id="player-container" class="glass-card player-card" style="display: none;">
+                <div class="player-info">
+                    <span id="playing-title">Select a song to play</span>
+                </div>
+                <audio id="audio-player" controls></audio>
+                <button id="close-player" class="btn-secondary">×</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit/Add Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h3 id="modal-title">Edit Mapping</h3>
+            <form id="edit-form">
+                <input type="hidden" id="original-query">
+                <div class="form-group">
+                    <label>Query</label>
+                    <input type="text" id="edit-query">
+                </div>
+                <div class="form-group">
+                    <label>Intent</label>
+                    <select id="edit-intent">
+                        <!-- Intents will be loaded here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mapped Song</label>
+                    <select id="edit-song">
+                        <!-- Songs will be loaded here -->
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="close-modal">Cancel</button>
+                    <button type="submit" class="btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sync Confirmation Modal -->
+    <div id="sync-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h2 id="sync-modal-title">🔄 Sync Confirmation</h2>
+            <div id="sync-modal-body" class="sync-warning">
+                <!-- Sync report will be injected here -->
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button id="cancel-sync-btn" class="btn-secondary">Cancel</button>
+                <button id="confirm-sync-btn" class="btn-danger">Confirm & Sync</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
