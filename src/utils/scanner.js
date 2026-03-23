@@ -183,4 +183,4 @@ export async function performSync(force = false) {
 // Only run if called directly
 if (process.argv[1] === __filename) {
   scanSongs().catch(console.error);
-}
+};

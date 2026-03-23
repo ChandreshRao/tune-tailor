@@ -14,12 +14,21 @@ export function findBestMatch(query) {
   const values = searchableFields.map(f => f.value);
   if (values.length === 0) return { type: "none" };
 
-  // 1. Try exact substring match first (most reliable for partial queries)
-  const substringMatch = searchableFields.find(f => 
-    f.value.toLowerCase().includes(query.toLowerCase())
-  );
+  const lowerQuery = query.toLowerCase();
 
-  if (substringMatch && query.length > 3) {
+  // 1. Try exact substring match or word-prefix match
+  const substringMatch = searchableFields.find(f => {
+    const val = f.value.toLowerCase();
+    // Direct substring
+    if (val.includes(lowerQuery)) return true;
+    
+    // Word-prefix match (e.g., "Kanta" matches "Kantha" if we consider common prefix)
+    // Or just check if any word starts with the query
+    const words = val.split(/[\s-_(),.]+/);
+    return words.some(word => word.startsWith(lowerQuery) || lowerQuery.startsWith(word));
+  });
+
+  if (substringMatch && query.length >= 3) {
     return {
       type: "single",
       song: substringMatch.song
@@ -30,7 +39,8 @@ export function findBestMatch(query) {
   const match = similarity.findBestMatch(query, values);
   const best = match.bestMatch;
 
-  if (best.rating < 0.3) {
+  // Lowered threshold to catch phonetic variations (e.g. Kanta vs Kantha)
+  if (best.rating < 0.2) {
     return { type: "none" };
   }
 
